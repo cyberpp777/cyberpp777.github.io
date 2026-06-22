@@ -1,0 +1,2236 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>忧郁蓝调</title>
+<link rel="icon" href="images/avatar.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Liu+Jian+Mao+Cao&family=Long+Cang&family=ZCOOL+XiaoWei&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@300;400;600;700&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://api.hypcvgm.top/NeteaseMiniPlayer/netease-mini-player-v2.css">
+<script src="https://api.hypcvgm.top/NeteaseMiniPlayer/netease-mini-player-v2.js"></script>
+<style>
+  /* ===== Reset & Base ===== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --deep: #0a0a0a;
+    --mid: #111111;
+    --card: rgba(24, 24, 26, 0.65);
+    --border: rgba(120, 120, 120, 0.10);
+    --text: #cccccc;
+    --text-dim: #909090;
+    --accent: #999999;
+    --accent-glow: rgba(150, 150, 150, 0.12);
+    --highlight: #e8e8e8;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  /* ===== Ink Wash Effects ===== */
+  .ink-bleed {
+    text-shadow:
+      0 0 2px  rgba(0, 0, 0, 0.4),
+      0 0 6px  rgba(0, 0, 0, 0.25),
+      0 0 14px rgba(0, 0, 0, 0.12),
+      0 0 30px rgba(0, 0, 0, 0.05);
+  }
+
+  .ink-bleed-light {
+    text-shadow:
+      0 0 1px  rgba(200, 220, 240, 0.3),
+      0 0 4px  rgba(180, 200, 225, 0.18),
+      0 0 10px rgba(200, 200, 200, 0.08);
+  }
+
+  .ink-spread {
+    position: relative;
+  }
+  .ink-spread::after {
+    content: attr(data-text);
+    position: absolute; left: 0; top: 0; width: 100%;
+    color: inherit; pointer-events: none; user-select: none;
+    filter: blur(3px); opacity: 0.25;
+  }
+
+  body {
+    font-family: 'Noto Serif SC', 'STSong', 'SimSun', serif;
+    background: var(--deep);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    line-height: 1.7;
+  }
+
+  /* ===== Background Layers ===== */
+  .bg-layer {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  }
+
+  .bg-gradient {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 80% 40% at 50% 10%, rgba(60, 60, 60, 0.06) 0%, transparent 45%),
+      radial-gradient(ellipse 60% 45% at 25% 50%, rgba(20, 20, 20, 0.4) 0%, transparent 50%),
+      radial-gradient(ellipse 45% 35% at 75% 65%, rgba(10, 5, 5, 0.5) 0%, transparent 50%),
+      radial-gradient(ellipse 35% 20% at 50% 100%, rgba(8, 8, 8, 0.6) 0%, transparent 50%),
+      linear-gradient(180deg, #060606 0%, #0b0b0b 35%, #080808 100%);
+    animation: bgShift 25s ease-in-out infinite;
+  }
+
+  @keyframes bgShift {
+    0%, 100% { opacity: 1; }
+    33% { opacity: 0.85; }
+    66% { opacity: 0.92; }
+  }
+
+  /* ===== Character Silhouettes ===== */
+  .silhouettes {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+  }
+
+  .silhouette {
+    position: fixed; pointer-events: none;
+    filter: blur(1px);
+    animation: silhouetteBreathe 8s ease-in-out infinite;
+  }
+
+  .wa2-sil {
+    left: -2%; bottom: 5%;
+    width: 180px; height: 360px;
+    animation-delay: 0s;
+  }
+
+  .suba-sil {
+    left: 52%; bottom: 2%;
+    width: 160px; height: 320px;
+    animation-delay: 2.5s;
+  }
+
+  .dn-sil {
+    right: -3%; bottom: 0%;
+    width: 210px; height: 380px;
+    animation-delay: 5s;
+  }
+
+  @keyframes silhouetteBreathe {
+    0%, 100% { opacity: 0.55; transform: scale(1); }
+    50% { opacity: 0.75; transform: scale(1.015); }
+  }
+
+  @media (max-width: 700px) {
+    .wa2-sil { width: 100px; height: 200px; left: -5%; bottom: 10%; }
+    .suba-sil { width: 90px; height: 180px; left: 45%; bottom: 8%; }
+    .dn-sil { width: 120px; height: 220px; right: -8%; bottom: 5%; }
+  }
+
+  /* Rain - wind-blown diagonal */
+  .raindrop {
+    position: absolute;
+    width: 1px;
+    background: linear-gradient(180deg, transparent, var(--rain-color));
+    animation: rainFall linear infinite;
+    transform-origin: top center;
+  }
+
+  @keyframes rainFall {
+    0% { transform: translateY(-12vh) translateX(0); opacity: 0; }
+    4% { opacity: 1; }
+    80% { opacity: 0.5; }
+    100% { transform: translateY(112vh) translateX(var(--drift, -8vh)); opacity: 0; }
+  }
+
+  /* Snow - WA2, fewer now */
+  .snowflake {
+    position: absolute;
+    background: var(--snow-color);
+    border-radius: 50%;
+    box-shadow: 0 0 3px 1px rgba(180, 200, 225, 0.15);
+    animation: snowFall linear infinite;
+  }
+
+  @keyframes snowFall {
+    0% { transform: translateY(-8vh) translateX(0) rotate(0deg); opacity: 0; }
+    8% { opacity: 0.5; }
+    50% { transform: translateX(25px); }
+    88% { opacity: 0.1; }
+    100% { transform: translateY(108vh) translateX(-15px) rotate(360deg); opacity: 0; }
+  }
+
+  /* Floating Light Particles - Subahibi */
+  .light-particle {
+    position: fixed; z-index: 0; pointer-events: none; border-radius: 50%;
+    background: rgba(200, 200, 200, 0.06);
+    box-shadow: 0 0 6px 2px rgba(180, 180, 180, 0.06);
+    animation: floatUpLight linear infinite;
+  }
+
+  @keyframes floatUpLight {
+    0% { transform: translateY(105vh) scale(0); opacity: 0; }
+    12% { opacity: 0.3; }
+    85% { opacity: 0.04; }
+    100% { transform: translateY(-8vh) scale(1.4); opacity: 0; }
+  }
+
+  /* Shadow Particles - Death Note */
+  .shadow-particle {
+    position: fixed; z-index: 0; pointer-events: none;
+    width: 3px; height: 6px; border-radius: 50% 50% 50% 0;
+    background: rgba(5, 2, 10, 0.5);
+    animation: shadowDrift linear infinite;
+  }
+
+  @keyframes shadowDrift {
+    0% { transform: translateY(105vh) translateX(0) rotate(0deg); opacity: 0; }
+    12% { opacity: 0.25; }
+    85% { opacity: 0.03; }
+    100% { transform: translateY(-5vh) translateX(50px) rotate(180deg); opacity: 0; }
+  }
+
+  /* ===== Content Wrapper ===== */
+  .content {
+    position: relative; z-index: 1;
+    max-width: 840px; margin: 0 auto; padding: 0 24px;
+  }
+
+  /* ===== Nav ===== */
+  nav {
+    position: relative; z-index: 2;
+    display: flex; flex-direction: column; align-items: flex-start;
+    width: 100%; padding: 28px 24px 0 8rem; gap: 18px;
+  }
+
+  .nav-logo {
+    font-size: 2rem; font-weight: 400; letter-spacing: 0.12em;
+    font-family: 'Zhi Mang Xing', 'Liu Jian Mao Cao', 'Ma Shan Zheng', cursive;
+    color: var(--highlight);
+    text-align: left; line-height: 1.3; padding-left: 0;
+    text-shadow:
+      0 0 1px  rgba(0, 0, 0, 0.8),
+      0 0 4px  rgba(0, 0, 0, 0.55),
+      0 0 12px rgba(0, 0, 0, 0.30),
+      0 0 28px rgba(0, 0, 0, 0.12),
+      0 0 50px rgba(0, 0, 0, 0.05);
+  }
+
+  .nav-links { display: flex; gap: 32px; list-style: none; padding-left: 0; }
+
+  /* ===== Left Panel (Time + Stickman) ===== */
+  .left-panel {
+    position: fixed; left: 0; top: 14%;
+    z-index: 2;
+    display: flex; flex-direction: column; align-items: flex-start;
+    padding-left: 8rem; gap: 36px;
+  }
+
+  /* ===== Time Module ===== */
+  .weather-time {
+    pointer-events: none;
+    display: flex; flex-direction: column; align-items: flex-start;
+  }
+
+  .wt-time {
+    font-size: 5rem; font-weight: 400; line-height: 0.9;
+    color: #e8e8e8;
+    font-family: 'Zhi Mang Xing', 'Liu Jian Mao Cao', 'Ma Shan Zheng', cursive;
+    text-shadow:
+      0 0 2px  rgba(0, 0, 0, 0.7),
+      0 0 6px  rgba(0, 0, 0, 0.4),
+      0 0 16px rgba(0, 0, 0, 0.18),
+      0 0 35px rgba(0, 0, 0, 0.06);
+    position: relative;
+  }
+
+  /* Ink wash glow behind time */
+  .wt-time::after {
+    content: '';
+    position: absolute; left: -20px; top: -20px;
+    width: 180px; height: 120px;
+    background:
+      radial-gradient(ellipse 40% 30% at 50% 55%, rgba(80,80,80,0.15) 0%, transparent 60%),
+      radial-gradient(ellipse 25% 20% at 65% 40%, rgba(100,100,100,0.10) 0%, transparent 55%);
+    pointer-events: none; z-index: -1;
+  }
+
+  .wt-date {
+    font-size: 1.1rem; color: #b0b0b0; margin-top: 6px;
+    font-family: 'Zhi Mang Xing', 'Liu Jian Mao Cao', 'Ma Shan Zheng', cursive;
+    letter-spacing: 0.1em;
+    text-shadow:
+      0 0 1px  rgba(0, 0, 0, 0.35),
+      0 0 3px  rgba(0, 0, 0, 0.18),
+      0 0 8px  rgba(0, 0, 0, 0.08);
+  }
+
+  @media (max-width: 700px) {
+    .left-panel { padding-left: 3rem; top: 12%; }
+    .wt-time { font-size: 2.8rem; }
+    .wt-time::after { width: 100px; height: 70px; left: -10px; top: -10px; }
+  }
+  .nav-links a {
+    color: var(--text-dim); text-decoration: none; font-size: 0.9rem;
+    letter-spacing: 0.08em; transition: color 0.3s, text-shadow 0.3s;
+  }
+  .nav-links a:hover {
+    color: var(--highlight);
+    text-shadow: 0 0 12px var(--accent-glow);
+  }
+
+  /* ===== Hero ===== */
+  .hero {
+    padding: 110px 0 60px; text-align: center; position: relative;
+  }
+
+  .hero-moon {
+    width: 100px; height: 100px; margin: 0 auto 36px;
+    border-radius: 50%; overflow: hidden;
+    border: 1px solid rgba(180, 180, 180, 0.1);
+    box-shadow:
+      0 0 2px  rgba(0, 0, 0, 0.5),
+      0 0 20px rgba(0, 0, 0, 0.3),
+      0 0 60px rgba(0, 0, 0, 0.15);
+    animation: moonGlow 6s ease-in-out infinite;
+    position: relative;
+  }
+
+  .hero-moon img {
+    width: 100%; height: 100%; object-fit: cover;
+    filter: grayscale(25%) brightness(0.88);
+    transition: filter 0.6s;
+  }
+
+  .hero-moon:hover img {
+    filter: grayscale(0%) brightness(1);
+  }
+
+  .hero-moon::after {
+    content: '';
+    position: absolute; inset: -14px; border-radius: 50%;
+    border: 1px solid rgba(180, 180, 180, 0.05);
+    animation: haloPulse 6s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  @keyframes haloPulse {
+    0%, 100% { opacity: 0.2; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(1.07); }
+  }
+
+  @keyframes moonGlow {
+    0%, 100% { box-shadow: 0 0 50px 16px rgba(150, 150, 150, 0.08), 0 0 100px 35px rgba(120, 120, 120, 0.04); }
+    50% { box-shadow: 0 0 70px 24px rgba(150, 150, 150, 0.12), 0 0 130px 50px rgba(120, 120, 120, 0.06); }
+  }
+
+  .hero h1 {
+    font-size: 3rem; font-weight: 400; letter-spacing: 0.2em;
+    font-family: 'Zhi Mang Xing', 'Liu Jian Mao Cao', 'Ma Shan Zheng', cursive;
+    color: #e8e8e8; margin-bottom: 8px;
+    text-shadow:
+      0 0 2px  rgba(0, 0, 0, 0.8),
+      0 0 6px  rgba(0, 0, 0, 0.5),
+      0 0 16px rgba(0, 0, 0, 0.28),
+      0 0 35px rgba(0, 0, 0, 0.10),
+      0 0 60px rgba(0, 0, 0, 0.04);
+    position: relative;
+  }
+
+  .hero h1::after {
+    content: attr(data-text);
+    position: absolute; left: 0; top: 0; width: 100%;
+    color: #e8e8e8; pointer-events: none; user-select: none;
+    filter: blur(6px); opacity: 0.30;
+  }
+
+  .hero .jp-tagline {
+    font-size: 0.95rem; color: var(--text-dim);
+    letter-spacing: 0.3em; margin-bottom: 16px;
+    font-family: 'Long Cang', 'Ma Shan Zheng', cursive;
+    text-shadow:
+      0 0 1px rgba(200, 220, 240, 0.25),
+      0 0 5px rgba(180, 200, 225, 0.12);
+  }
+
+  .hero .subtitle {
+    font-size: 1.2rem; color: #e0e0e0; letter-spacing: 0.08em;
+    font-family: 'Zhi Mang Xing', 'Liu Jian Mao Cao', 'Ma Shan Zheng', cursive;
+    text-shadow:
+      0 0 2px  rgba(0, 0, 0, 0.6),
+      0 0 8px  rgba(0, 0, 0, 0.25),
+      0 0 20px rgba(0, 0, 0, 0.08);
+  }
+
+  .hero-line {
+    width: 1px; height: 50px; margin: 30px auto 0;
+    background: linear-gradient(180deg, transparent, var(--border), transparent);
+  }
+
+  /* ===== Section Common ===== */
+  section { padding: 56px 0; }
+
+  .section-header {
+    text-align: center; margin-bottom: 44px;
+  }
+
+  .section-header .en-label {
+    font-size: 0.72rem; letter-spacing: 0.28em;
+    color: var(--accent); text-transform: uppercase; margin-bottom: 6px;
+  }
+
+  .section-header h2 {
+    font-size: 1.55rem; font-weight: 400; letter-spacing: 0.1em;
+    color: #e0e0e0;
+    font-family: 'Zhi Mang Xing', 'Liu Jian Mao Cao', 'Ma Shan Zheng', cursive;
+    text-shadow:
+      0 0 2px  rgba(0, 0, 0, 0.6),
+      0 0 8px  rgba(0, 0, 0, 0.30),
+      0 0 20px rgba(0, 0, 0, 0.10);
+  }
+
+  .divider {
+    width: 40px; height: 1px; margin: 14px auto;
+    background: var(--border);
+  }
+
+  /* ===== Glass Card ===== */
+  .glass-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px; padding: 36px;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    transition: border-color 0.5s, box-shadow 0.5s;
+  }
+
+  .glass-card:hover {
+    border-color: rgba(160, 160, 160, 0.12);
+    box-shadow: 0 0 25px rgba(100, 100, 100, 0.04);
+  }
+
+  /* ===== About ===== */
+  .about-text p {
+    color: #e8e8e8; font-weight: 400;
+    font-family: 'Zhi Mang Xing', 'Liu Jian Mao Cao', 'Ma Shan Zheng', cursive;
+    font-size: 1.7rem; letter-spacing: 0.06em; line-height: 2;
+    margin-bottom: 14px;
+    text-shadow:
+      0 0 2px  rgba(0, 0, 0, 0.7),
+      0 0 6px  rgba(0, 0, 0, 0.4),
+      0 0 16px rgba(0, 0, 0, 0.18),
+      0 0 35px rgba(0, 0, 0, 0.06);
+  }
+
+  .about-text p:last-child { margin-bottom: 0; }
+
+  /* ===== Favorites / Anime Posters ===== */
+  .posters-row {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+  }
+
+  .poster-item {
+    position: relative; border-radius: 8px; overflow: hidden;
+    aspect-ratio: 3/4;
+  }
+
+  .poster-item img {
+    width: 100%; height: 100%; object-fit: cover;
+    display: block;
+    filter: grayscale(15%) brightness(0.85);
+    transition: filter 0.5s, transform 0.5s;
+  }
+  .poster-item:hover img {
+    filter: grayscale(0%) brightness(1);
+    transform: scale(1.04);
+  }
+
+  .poster-info {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    padding: 40px 16px 16px;
+    background: linear-gradient(transparent, rgba(0,0,0,0.85));
+    pointer-events: none;
+  }
+
+  .poster-info h3 {
+    font-size: 1.1rem; font-weight: 400; letter-spacing: 0.06em;
+    color: #e8e8e8;
+    font-family: 'Zhi Mang Xing', 'Liu Jian Mao Cao', 'Ma Shan Zheng', cursive;
+    text-shadow:
+      0 0 2px rgba(0,0,0,0.8),
+      0 0 8px rgba(0,0,0,0.4);
+  }
+
+  .poster-info .fav-subtitle {
+    font-size: 0.72rem; color: rgba(220,220,220,0.6);
+    letter-spacing: 0.08em; margin-bottom: 6px;
+  }
+
+  @media (max-width: 700px) {
+    .posters-row { grid-template-columns: 1fr; gap: 16px; }
+  }
+
+  /* ===== Essays ===== */
+  .essays-list {
+    display: flex; flex-direction: column; gap: 48px;
+  }
+
+  .essay-card {
+    padding: 28px 0;
+    position: relative;
+  }
+
+  .essay-card + .essay-card {
+    border-top: 1px solid rgba(150, 150, 150, 0.06);
+  }
+
+  .essay-meta {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 10px;
+  }
+
+  .essay-date {
+    font-size: 1.1rem; color: #f2f2f2;
+    letter-spacing: 0.1em; font-weight: 400;
+    font-family: 'Zhi Mang Xing', 'Liu Jian Mao Cao', 'Ma Shan Zheng', cursive;
+    text-shadow:
+      0 0 1px  rgba(0, 0, 0, 0.35),
+      0 0 3px  rgba(0, 0, 0, 0.18),
+      0 0 8px  rgba(0, 0, 0, 0.08);
+  }
+
+  .essay-tag {
+    font-size: 0.7rem; color: var(--accent);
+    border: 1px solid rgba(80, 120, 180, 0.2);
+    border-radius: 20px; padding: 2px 10px;
+    letter-spacing: 0.05em;
+  }
+
+  .essay-title {
+    font-size: 1.2rem; font-weight: 400; color: var(--highlight);
+    margin-bottom: 12px; letter-spacing: 0.06em;
+    font-family: 'Zhi Mang Xing', 'ZCOOL XiaoWei', cursive;
+    text-shadow:
+      0 0 2px  rgba(0, 0, 0, 0.55),
+      0 0 8px  rgba(0, 0, 0, 0.25),
+      0 0 18px rgba(0, 0, 0, 0.08);
+  }
+
+  .essay-excerpt {
+    color: #e8e8e8; font-weight: 400;
+    font-family: 'Zhi Mang Xing', 'Liu Jian Mao Cao', 'Ma Shan Zheng', cursive;
+    font-size: 1.7rem; letter-spacing: 0.06em; line-height: 2;
+    text-shadow:
+      0 0 2px  rgba(0, 0, 0, 0.7),
+      0 0 6px  rgba(0, 0, 0, 0.4),
+      0 0 16px rgba(0, 0, 0, 0.18),
+      0 0 35px rgba(0, 0, 0, 0.06);
+  }
+
+  @media (max-width: 700px) {
+    .essay-card { padding: 20px 0; }
+  }
+
+  /* ===== Works Grid ===== */
+  .works-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+  }
+
+  .work-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 28px 24px;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    transition: border-color 0.4s, box-shadow 0.4s, transform 0.4s;
+    text-align: center;
+  }
+
+  .work-card:hover {
+    border-color: rgba(170, 170, 170, 0.15);
+    box-shadow: 0 0 30px rgba(100, 100, 100, 0.04);
+    transform: translateY(-3px);
+  }
+
+  .work-icon { font-size: 2rem; margin-bottom: 14px; opacity: 0.4; }
+
+  .work-card h3 {
+    font-size: 1rem; font-weight: 400; letter-spacing: 0.05em;
+    color: #b0bcc8; margin-bottom: 6px;
+  }
+
+  .work-card p {
+    font-size: 0.85rem; color: var(--text-dim); font-weight: 300;
+  }
+
+  .work-card .tag {
+    display: inline-block; margin-top: 12px;
+    padding: 3px 12px; border-radius: 20px;
+    font-size: 0.7rem; letter-spacing: 0.08em;
+    color: var(--accent);
+    border: 1px solid rgba(70, 110, 170, 0.15);
+  }
+
+  /* ===== Quote Block ===== */
+  .quote-block {
+    text-align: center; padding: 40px 0;
+  }
+
+  .quote-block .jp {
+    font-family: 'Long Cang', 'Liu Jian Mao Cao', 'Ma Shan Zheng', cursive;
+    font-size: 1.1rem; color: rgba(200, 200, 200, 0.45);
+    letter-spacing: 0.15em; margin-bottom: 8px;
+  }
+
+  .quote-block .cn {
+    font-size: 0.85rem; color: rgba(190, 190, 190, 0.35);
+    letter-spacing: 0.08em;
+  }
+
+  .quote-block .attribution {
+    font-size: 0.7rem; color: rgba(180, 180, 180, 0.28);
+    margin-top: 12px; letter-spacing: 0.12em;
+  }
+
+  /* ===== Contact ===== */
+  .contact-list {
+    display: flex; justify-content: center; gap: 40px; flex-wrap: wrap;
+  }
+
+  .contact-item {
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    color: var(--text-dim); text-decoration: none;
+    transition: color 0.3s, text-shadow 0.3s;
+    font-size: 0.88rem; font-weight: 300; letter-spacing: 0.04em;
+  }
+
+  .contact-item:hover {
+    color: var(--highlight);
+    text-shadow: 0 0 15px var(--accent-glow);
+  }
+
+  .contact-icon {
+    font-size: 1.4rem; width: 50px; height: 50px;
+    border-radius: 50%;
+    background: var(--card); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+
+  .contact-item:hover .contact-icon {
+    border-color: rgba(170, 170, 170, 0.15);
+    box-shadow: 0 0 20px rgba(100, 100, 100, 0.05);
+  }
+
+  /* ===== Footer ===== */
+  footer {
+    text-align: center; padding: 50px 0 36px;
+    font-size: 0.78rem; color: var(--text-dim); font-weight: 300;
+    letter-spacing: 0.06em;
+  }
+
+  footer .footer-quote { margin-bottom: 16px; }
+  footer .footer-quote .jp {
+    font-family: 'Long Cang', 'Ma Shan Zheng', cursive;
+    font-size: 0.85rem; color: rgba(190, 190, 190, 0.30);
+    letter-spacing: 0.12em;
+  }
+
+  footer span { color: var(--accent); }
+
+  /* ===== Affection Stick Figure ===== */
+  .affection-box {
+    pointer-events: auto;
+    display: flex; flex-direction: column; align-items: center; gap: 16px;
+    padding-left: 0;
+  }
+
+  .stickman {
+    position: relative; width: 80px; height: 120px;
+  }
+
+  .stickman svg {
+    width: 100%; height: 100%;
+    filter: url(#inkBlur);
+  }
+
+  .stickman svg path,
+  .stickman svg circle {
+    stroke: #c0c0c0;
+    stroke-width: 2.5;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    filter: drop-shadow(0 0 2px rgba(0,0,0,0.5)) drop-shadow(0 0 6px rgba(0,0,0,0.2));
+  }
+
+  /* Slap hand */
+  .slap-hand {
+    position: absolute; right: -30px; top: 20px;
+    font-size: 2rem; opacity: 0; transform: rotate(-30deg);
+    transition: none; pointer-events: none;
+  }
+  .slap-hand.slapping {
+    animation: slapHit 0.5s ease-out forwards;
+  }
+  @keyframes slapHit {
+    0%   { opacity: 0; transform: rotate(-60deg) scale(0.5); right: -40px; }
+    30%  { opacity: 1; transform: rotate(10deg) scale(1.3); right: 5px; }
+    60%  { opacity: 1; transform: rotate(-5deg) scale(1.1); right: 10px; }
+    100% { opacity: 0; transform: rotate(0deg) scale(0.8); right: 20px; }
+  }
+
+  .stickman.stunned svg path,
+  .stickman.stunned svg circle {
+    stroke: #e0e0e0;
+    filter:
+      drop-shadow(0 0 1px rgba(200,50,50,0.4))
+      drop-shadow(0 0 4px rgba(200,50,50,0.2))
+      drop-shadow(0 0 8px rgba(0,0,0,0.3));
+    transition: all 0.3s;
+  }
+
+  .affection-btn {
+    background: rgba(18,18,20,0.8);
+    border: 1px solid rgba(150,150,150,0.12);
+    border-radius: 24px;
+    padding: 10px 20px;
+    color: #e8e8e8;
+    cursor: pointer;
+    font-family: 'Zhi Mang Xing', 'Liu Jian Mao Cao', 'Ma Shan Zheng', cursive;
+    font-size: 1rem; letter-spacing: 0.08em;
+    text-shadow:
+      0 0 2px  rgba(0, 0, 0, 0.6),
+      0 0 6px  rgba(0, 0, 0, 0.25),
+      0 0 14px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 0 2px rgba(0,0,0,0.4), 0 0 15px rgba(0,0,0,0.2);
+    transition: all 0.3s;
+  }
+  .affection-btn:hover {
+    border-color: rgba(200,200,200,0.2);
+    box-shadow: 0 0 2px rgba(0,0,0,0.5), 0 0 25px rgba(0,0,0,0.3);
+  }
+
+  .affection-result {
+    font-size: 0.9rem; color: #e8e8e8; text-align: center; min-height: 24px;
+    font-family: 'Zhi Mang Xing', 'Liu Jian Mao Cao', 'Ma Shan Zheng', cursive;
+    text-shadow:
+      0 0 1px  rgba(0, 0, 0, 0.35),
+      0 0 3px  rgba(0, 0, 0, 0.18),
+      0 0 8px  rgba(0, 0, 0, 0.08);
+    transition: opacity 0.4s;
+  }
+
+  /* ===== Guestbook ===== */
+  .guestbook {
+    display: flex; flex-direction: column; gap: 14px;
+    max-width: 600px; margin: 0 auto;
+  }
+
+  .gb-input {
+    width: 100%; min-height: 60px; resize: vertical;
+    background: transparent; border: none;
+    border-bottom: 1px solid rgba(180,180,180,0.10);
+    padding: 8px 4px;
+    color: #e8e8e8; font-size: 1.2rem;
+    font-family: 'Zhi Mang Xing', 'Liu Jian Mao Cao', 'Ma Shan Zheng', cursive;
+    letter-spacing: 0.06em; line-height: 1.8;
+    outline: none; transition: border-color 0.4s;
+    text-shadow:
+      0 0 2px  rgba(0, 0, 0, 0.6),
+      0 0 8px  rgba(0, 0, 0, 0.2);
+  }
+  .gb-input:focus { border-color: rgba(200,200,200,0.3); }
+  .gb-input::placeholder {
+    color: #e8e8e8;
+    font-family: 'Zhi Mang Xing', 'Liu Jian Mao Cao', 'Ma Shan Zheng', cursive;
+    text-shadow:
+      0 0 2px  rgba(0, 0, 0, 0.7),
+      0 0 6px  rgba(0, 0, 0, 0.4),
+      0 0 16px rgba(0, 0, 0, 0.18),
+      0 0 35px rgba(0, 0, 0, 0.06);
+  }
+
+  .gb-submit {
+    align-self: flex-end;
+    padding: 4px 18px;
+    background: transparent; border: 1px solid rgba(180,180,180,0.10);
+    border-radius: 20px; cursor: pointer;
+    color: #b0b0b0; font-size: 0.9rem;
+    font-family: 'Zhi Mang Xing', 'Ma Shan Zheng', cursive;
+    letter-spacing: 0.08em;
+    text-shadow:
+      0 0 2px  rgba(0, 0, 0, 0.5),
+      0 0 6px  rgba(0, 0, 0, 0.2);
+    transition: all 0.3s;
+  }
+  .gb-submit:hover { border-color: rgba(200,200,200,0.25); color: #e8e8e8; }
+
+  .gb-list {
+    display: flex; flex-direction: column; gap: 14px;
+    max-height: 280px; overflow-y: auto;
+  }
+  .gb-list::-webkit-scrollbar { width: 2px; }
+  .gb-list::-webkit-scrollbar-thumb { background: rgba(150,150,150,0.12); border-radius: 1px; }
+
+  .gb-msg {
+    position: relative; padding: 0 0 10px 0;
+    font-size: 1rem; color: #e8e8e8; line-height: 1.8;
+    font-family: 'Zhi Mang Xing', 'Liu Jian Mao Cao', 'Ma Shan Zheng', cursive;
+    word-break: break-all;
+    text-shadow:
+      0 0 2px  rgba(0, 0, 0, 0.6),
+      0 0 6px  rgba(0, 0, 0, 0.25),
+      0 0 16px rgba(0, 0, 0, 0.08);
+    border-bottom: 1px solid rgba(150,150,150,0.04);
+  }
+
+  .gb-del {
+    position: absolute; right: 0; top: -2px;
+    background: none; border: none; cursor: pointer;
+    color: rgba(180,180,180,0.2); font-size: 0.75rem;
+    padding: 2px 6px; transition: color 0.3s;
+  }
+  .gb-del:hover { color: rgba(220,100,100,0.5); }
+
+  @media (max-width: 700px) {
+    .guestbook { max-width: 100%; }
+    .gb-list { max-height: 200px; }
+    .gb-input { font-size: 1rem; }
+  }
+
+  /* ===== Daily Poem ===== */
+  .daily-poem {
+    position: fixed; right: 16px; bottom: 10%;
+    z-index: 2; pointer-events: none;
+    text-align: right;
+    font-family: 'Zhi Mang Xing', 'Liu Jian Mao Cao', 'Ma Shan Zheng', cursive;
+    text-shadow:
+      0 0 2px  rgba(0, 0, 0, 0.7),
+      0 0 6px  rgba(0, 0, 0, 0.4),
+      0 0 16px rgba(0, 0, 0, 0.18),
+      0 0 35px rgba(0, 0, 0, 0.06);
+  }
+
+  .daily-poem .dp-content {
+    font-size: 1.7rem; color: #e8e8e8; line-height: 1.6;
+    white-space: nowrap; letter-spacing: 0.08em;
+  }
+
+  .daily-poem .dp-author {
+    font-size: 0.95rem; color: #909090; line-height: 1.6;
+    letter-spacing: 0.12em; margin-top: 2px;
+  }
+
+  @media (max-width: 700px) {
+    .daily-poem { right: 8px; bottom: 8%; }
+    .daily-poem .dp-content { font-size: 1.2rem; }
+    .daily-poem .dp-author { font-size: 0.85rem; }
+  }
+
+  @media (max-width: 700px) {
+    .left-panel { padding-left: 3rem; top: 10%; gap: 24px; }
+    .affection-box { padding-left: 0; }
+    .stickman { width: 56px; height: 84px; }
+    .affection-btn { font-size: 0.82rem; padding: 8px 14px; }
+  }
+
+  /* ===== Hidden Apple Easter Egg - Death Note ===== */
+  .apple-easter-egg {
+    position: fixed; bottom: 28px; right: 28px; z-index: 10;
+    font-size: 1.6rem; opacity: 0.07; cursor: default;
+    transition: opacity 0.6s, transform 0.6s;
+    filter: grayscale(0.5);
+  }
+  .apple-easter-egg:hover {
+    opacity: 0.35; transform: rotate(-15deg) scale(1.3);
+  }
+
+  /* ===== Scrollbar ===== */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(150, 150, 150, 0.10); border-radius: 2px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(150, 150, 150, 0.22); }
+
+  /* ===== Music Player — Ink Wash Overrides ===== */
+  .netease-mini-player {
+    filter: grayscale(100%) contrast(1.15) brightness(0.9);
+    mix-blend-mode: normal;
+    transition: filter 0.6s;
+    z-index: 4 !important;
+  }
+
+  /* Ink splatter — top right corner accent */
+  .netease-mini-player::before {
+    content: '';
+    position: fixed; top: -12px; right: -8px; z-index: -1;
+    width: 80px; height: 80px;
+    background:
+      radial-gradient(ellipse 30% 25% at 70% 30%, rgba(80, 80, 80, 0.25) 0%, transparent 60%),
+      radial-gradient(ellipse 20% 15% at 45% 55%, rgba(60, 60, 60, 0.18) 0%, transparent 55%),
+      radial-gradient(circle 8% at 60% 40%, rgba(100, 100, 100, 0.2) 0%, transparent 50%),
+      radial-gradient(circle 5% at 75% 22%, rgba(90, 90, 90, 0.22) 0%, transparent 45%),
+      radial-gradient(circle 12% at 50% 50%, rgba(50, 50, 50, 0.15) 0%, transparent 55%);
+    pointer-events: none;
+    animation: inkBleed 8s ease-in-out infinite;
+  }
+
+  @keyframes inkBleed {
+    0%, 100% { opacity: 0.6; transform: scale(1); }
+    40% { opacity: 0.85; transform: scale(1.15); }
+    70% { opacity: 0.55; transform: scale(0.95); }
+  }
+
+  /* Ink splatter dots — secondary accent */
+  .netease-mini-player::after {
+    content: '';
+    position: fixed;
+    top: 65px; right: 55px;
+    width: 45px; height: 45px;
+    background:
+      radial-gradient(circle 20% at 30% 40%, rgba(70, 70, 70, 0.28) 0%, transparent 55%),
+      radial-gradient(circle 12% at 60% 30%, rgba(90, 90, 90, 0.18) 0%, transparent 50%),
+      radial-gradient(circle 6% at 40% 60%, rgba(60, 60, 60, 0.22) 0%, transparent 45%);
+    pointer-events: none;
+    animation: inkBleed 10s ease-in-out 3s infinite reverse;
+  }
+
+  /* ===== Fade-in ===== */
+  .fade-section {
+    opacity: 0; transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .fade-section.visible { opacity: 1; transform: translateY(0); }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 700px) {
+    .hero h1 { font-size: 2rem; }
+    .hero { padding: 80px 0 40px; }
+    nav { padding-left: 3rem; }
+    .nav-links { gap: 16px; }
+    .works-grid { grid-template-columns: 1fr; }
+    .contact-list { gap: 24px; }
+    .glass-card { padding: 24px; }
+    .quote-block .jp { font-size: 0.95rem; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="sakura" style="z-index:1;position:fixed;left:0;top:0;height:100vh;width:100vw;"></canvas>
+<style>canvas{padding:0;margin:0;}</style>
+
+<!-- Background -->
+<div class="bg-layer"><div class="bg-gradient"></div></div>
+
+<!-- Character Silhouettes -->
+<div class="silhouettes" aria-hidden="true">
+  <!-- WA2: Setsuna - left side, long hair, standing in snow -->
+  <svg class="silhouette wa2-sil" viewBox="0 0 200 400" xmlns="http://www.w3.org/2000/svg">
+    <path d="M100 40 C90 30 75 20 80 10 C82 4 88 0 100 0 C112 0 118 4 120 10 C125 20 110 30 100 40Z M60 55 C55 40 45 35 40 45 C35 55 40 70 50 75 L55 75 L52 65 C55 60 58 55 60 55Z M140 55 C145 40 155 35 160 45 C165 55 160 70 150 75 L145 75 L148 65 C145 60 142 55 140 55Z M100 40 C85 35 70 45 65 60 C55 95 52 140 55 180 C56 200 60 215 65 230 L70 250 C72 260 75 275 80 290 L85 310 C88 325 90 340 92 355 L95 375 C96 385 98 395 100 400 C102 395 104 385 105 375 L108 355 C110 340 112 325 115 310 L120 290 C125 275 128 260 130 250 L135 230 C140 215 144 200 145 180 C148 140 145 95 135 60 C130 45 115 35 100 40Z" fill="#8baac8" opacity="0.12"/>
+  </svg>
+
+  <!-- Subahibi: Yuki - center-right, looking up at the sky -->
+  <svg class="silhouette suba-sil" viewBox="0 0 200 380" xmlns="http://www.w3.org/2000/svg">
+    <path d="M100 30 C88 20 72 15 78 8 C82 2 90 0 100 0 C110 0 118 2 122 8 C128 15 112 20 100 30Z M55 50 C48 38 38 35 34 45 C30 55 36 68 46 72 L52 72 L48 62 C52 57 54 53 55 50Z M145 50 C152 38 162 35 166 45 C170 55 164 68 154 72 L148 72 L152 62 C148 57 146 53 145 50Z M100 30 C84 28 68 38 62 55 C50 90 44 130 42 170 C41 190 43 210 46 230 C48 245 50 258 48 272 L45 290 C43 305 44 320 48 338 L52 355 C54 365 58 372 62 380 L70 380 C74 372 78 365 80 355 L84 338 C88 320 89 305 87 290 L84 272 C82 258 80 245 82 230 C85 210 87 190 86 170 C84 130 78 90 66 55 C60 38 52 32 100 30Z M62 55 C55 68 45 75 30 78 L32 70 C40 65 50 60 62 55Z M138 55 C145 68 155 75 170 78 L168 70 C160 65 150 60 138 55Z" fill="#d4b896" opacity="0.08"/>
+  </svg>
+
+  <!-- Death Note: Ryuk - right side, tall gothic winged -->
+  <svg class="silhouette dn-sil" viewBox="0 0 240 440" xmlns="http://www.w3.org/2000/svg">
+    <path d="M120 10 C110 0 100 0 95 8 C90 16 92 28 100 35 C108 42 112 48 110 55 C108 62 100 68 95 75 C90 82 88 92 90 100 C92 108 98 112 105 115 L95 125 C85 135 70 142 60 150 L55 160 C50 170 52 180 58 185 C64 190 70 188 75 182 L78 175 C80 170 82 168 85 170 C88 172 90 178 92 185 L95 200 C97 210 100 220 100 230 L98 250 C96 270 95 290 96 310 L98 340 C99 360 100 380 100 400 L105 435 C106 440 108 440 110 435 L115 400 C116 380 117 360 118 340 L120 310 C121 290 120 270 118 250 L116 230 C116 220 118 210 120 200 L122 185 C124 178 126 172 128 170 C131 168 133 170 135 175 L138 182 C142 188 148 190 154 185 C160 180 162 170 157 160 L152 150 C142 142 127 135 117 125 L107 115 C114 112 120 108 122 100 C124 92 122 82 117 75 C112 68 104 62 102 55 C100 48 104 42 112 35 C120 28 122 16 117 8 C112 0 102 0 97 10 C92 20 100 30 110 30 C115 30 118 25 120 20 C122 15 120 10 120 10Z M40 120 C30 115 20 118 15 125 C12 130 15 138 22 142 L28 143 L25 136 C28 130 32 125 40 120Z M200 120 C210 115 220 118 225 125 C228 130 225 138 218 142 L212 143 L215 136 C212 130 208 125 200 120Z M30 200 C22 195 15 198 12 205 C10 210 13 218 20 222 L26 223 L23 216 C25 210 27 205 30 200Z M210 200 C218 195 225 198 228 205 C230 210 227 218 220 222 L214 223 L217 216 C215 210 213 205 210 200Z" fill="#a07070" opacity="0.09"/>
+  </svg>
+</div>
+
+
+<!-- Nav -->
+<nav>
+  <div class="nav-logo">如果那天握住的不是硬币而是勇者的手</div>
+  <ul class="nav-links">
+    <li><a href="#about">關於</a></li>
+    <li><a href="#essays">随筆</a></li>
+    <li><a href="#favorites">好き</a></li>
+    <li><a href="#works">作品</a></li>
+    <li><a href="#guestbook-section">留言</a></li>
+    <li><a href="#contact">聯繫</a></li>
+  </ul>
+</nav>
+
+<!-- Left Side Panel (Time + Stickman) -->
+<div class="left-panel">
+  <div class="weather-time" id="weatherTime">
+    <div class="wt-time" id="wtClock"></div>
+    <div class="wt-date" id="wtDate"></div>
+  </div>
+  <div class="affection-box">
+    <div class="stickman" id="stickman">
+      <svg viewBox="0 0 80 120" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="inkBlur">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="0.3" result="blur"/>
+            <feComponentTransfer in="blur" result="ink">
+              <feFuncA type="linear" slope="1.3"/>
+            </feComponentTransfer>
+            <feMerge><feMergeNode in="ink"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+        <circle cx="40" cy="20" r="12"/>
+        <path d="M40 32 L40 68"/>
+        <path d="M40 42 L22 34"/><path d="M40 42 L58 34"/>
+        <path d="M40 68 L24 98"/><path d="M40 68 L56 98"/>
+        <circle cx="36" cy="17" r="1.5" fill="#c0c0c0" stroke="none"/>
+        <circle cx="44" cy="17" r="1.5" fill="#c0c0c0" stroke="none"/>
+        <path d="M34 25 Q40 29 46 25" stroke-width="1.5"/>
+      </svg>
+      <div class="slap-hand" id="slapHand">👋</div>
+    </div>
+    <button class="affection-btn" id="affectionBtn">点击查询好感度</button>
+    <div class="affection-result" id="affectionResult"></div>
+  </div>
+</div>
+
+<!-- Daily Poem -->
+<div class="daily-poem">
+  <div class="dp-content" id="dpContent"></div>
+  <div class="dp-author" id="dpAuthor"></div>
+</div>
+
+<!-- Music Player -->
+<div class="netease-mini-player"
+     data-song-id="1876828851"
+     data-theme="dark"
+     data-position="top-right"
+     data-lyric="true"
+     data-autoplay="false">
+</div>
+
+<!-- Content -->
+<div class="content">
+
+  <!-- Hero -->
+  <header class="hero fade-section">
+    <div class="hero-moon">
+      <img src="images/avatar.jpg" alt="头像">
+    </div>
+    <div class="jp-tagline">雨が降っている。静かに、ただ静かに。</div>
+    <h1 data-text="忧郁蓝调">忧郁蓝调</h1>
+    <div class="hero-line"></div>
+  </header>
+
+  <!-- About -->
+  <section id="about" class="fade-section">
+    <div class="section-header">
+      <div class="en-label">About</div>
+      <h2>关于我</h2>
+      <div class="divider"></div>
+    </div>
+    <div class="about-text">
+      <p>瓦双服赋能，CS魔王s，apex天榜猎杀，LOL峡谷之巅前五十，三角洲绝密3kd，ow 五百强，永劫无间天人百强。</p>
+      <p>我不要天赋了，我只想要爱。</p>
+    </div>
+  </section>
+
+  <!-- Essays -->
+  <section id="essays" class="fade-section">
+    <div class="section-header">
+      <div class="en-label">Essays</div>
+      <h2>随筆</h2>
+      <div class="divider"></div>
+    </div>
+    <div class="essays-list">
+      <article class="essay-card">
+        <div class="essay-meta">
+          <span class="essay-date">2026.06.23</span>
+        </div>
+        <p class="essay-excerpt">人生要是可以存档该多好啊，我们总是能够回到记忆里的重要节点，去挽回那些说错的话，做错的事以及…错过的人。</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- Quote - Subahibi -->
+  <div class="quote-block fade-section">
+    <p class="jp">人よ、幸福であれ！</p>
+    <p class="cn">人啊，幸福地活下去吧！</p>
+    <p class="attribution">—— 素晴らしき日々 ～不連続存在～</p>
+  </div>
+
+  <!-- Favorites -->
+  <section id="favorites" class="fade-section">
+    <div class="section-header">
+      <div class="en-label">Favorites</div>
+      <h2>好きな作品</h2>
+      <div class="divider"></div>
+    </div>
+    <div class="posters-row">
+
+      <!-- White Album 2 -->
+      <div class="poster-item">
+        <img src="images/wa2-poster.jpg" alt="WHITE ALBUM 2" loading="lazy">
+        <div class="poster-info">
+          <p class="fav-subtitle">白色相簿 2</p>
+          <h3>WHITE ALBUM 2</h3>
+        </div>
+      </div>
+
+      <!-- Subahibi -->
+      <div class="poster-item">
+        <img src="images/subahibi-poster.jpg" alt="素晴らしき日々" loading="lazy">
+        <div class="poster-info">
+          <p class="fav-subtitle">美好的每一天</p>
+          <h3>素晴らしき日々</h3>
+        </div>
+      </div>
+
+      <!-- Death Note -->
+      <div class="poster-item">
+        <img src="images/deathnote-poster.jpg" alt="DEATH NOTE" loading="lazy">
+        <div class="poster-info">
+          <p class="fav-subtitle">死亡筆記</p>
+          <h3>DEATH NOTE</h3>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Quote - WA2 -->
+  <div class="quote-block fade-section">
+    <p class="jp">どうして、こうなるんだろう。</p>
+    <p class="cn">為什麼，會變成這樣呢。</p>
+    <p class="attribution">—— WHITE ALBUM 2 ～closing chapter～</p>
+  </div>
+
+  <!-- Works -->
+  <section id="works" class="fade-section">
+    <div class="section-header">
+      <div class="en-label">Works</div>
+      <h2>作品 / 項目</h2>
+      <div class="divider"></div>
+    </div>
+    <div class="works-grid">
+      <div class="work-card">
+        <div class="work-icon">✦</div>
+        <h3>作品名稱</h3>
+        <p>簡短描述你的作品或項目</p>
+        <span class="tag">TAG</span>
+      </div>
+      <div class="work-card">
+        <div class="work-icon">◇</div>
+        <h3>作品名稱</h3>
+        <p>簡短描述你的作品或項目</p>
+        <span class="tag">TAG</span>
+      </div>
+      <div class="work-card">
+        <div class="work-icon">○</div>
+        <h3>作品名稱</h3>
+        <p>簡短描述你的作品或項目</p>
+        <span class="tag">TAG</span>
+      </div>
+      <div class="work-card">
+        <div class="work-icon">△</div>
+        <h3>還有什麼</h3>
+        <p>等你來填充更多內容</p>
+        <span class="tag">TODO</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quote - Death Note -->
+  <div class="quote-block fade-section">
+    <p class="cn" style="font-size:1rem;">この世界は腐っている。</p>
+    <p class="cn">—— 但我仍然想看看，這片天空的另一邊。</p>
+    <p class="attribution">—— DEATH NOTE</p>
+  </div>
+
+  <!-- Guestbook -->
+  <section id="guestbook-section" class="fade-section">
+    <div class="section-header">
+      <div class="en-label">Guestbook</div>
+      <h2>留言板</h2>
+      <div class="divider"></div>
+    </div>
+    <div class="guestbook" id="guestbook">
+      <textarea class="gb-input" id="gbInput" placeholder="留下足迹…" maxlength="200"></textarea>
+      <button class="gb-submit" id="gbSubmit">留下墨迹</button>
+      <div class="gb-list" id="gbList"></div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact" class="fade-section">
+    <div class="section-header">
+      <div class="en-label">Contact</div>
+      <h2>找到我</h2>
+      <div class="divider"></div>
+    </div>
+    <div class="glass-card">
+      <div class="contact-list">
+        <a href="javascript:void(0)" class="contact-item locked-link">
+          <div class="contact-icon">✉</div>
+          <span>Email</span>
+        </a>
+        <a href="javascript:void(0)" class="contact-item locked-link">
+          <div class="contact-icon">◈</div>
+          <span>GitHub</span>
+        </a>
+        <a href="javascript:void(0)" class="contact-item" id="twitterLink">
+          <div class="contact-icon">♢</div>
+          <span>Twitter</span>
+        </a>
+        <a href="https://space.bilibili.com/15677416" target="_blank" rel="noopener" class="contact-item">
+          <div class="contact-icon">♪</div>
+          <span>Bilibili</span>
+        </a>
+        <a href="https://weibo.com/u/7799540748" target="_blank" rel="noopener" class="contact-item">
+          <div class="contact-icon">◉</div>
+          <span>Weibo</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-quote">
+      <p class="jp">雨が止んでも、闇は優しいままだ。</p>
+    </div>
+    <p>&copy; 2026 <span>如果那天握住的不是硬币而是勇者的手</span>. All rights reserved.</p>
+  </footer>
+
+</div>
+
+<!-- Death Note Easter Egg -->
+<div class="apple-easter-egg" title="退屈だ...">🍎</div>
+
+<script>
+  // ===== Ink Trail (Cursor) =====
+  var inkTrails = [];
+  var lastInk = 0;
+  document.addEventListener('mousemove', function(e) {
+    var now = Date.now();
+    if (now - lastInk < 50) return;
+    lastInk = now;
+    var dot = document.createElement('div');
+    var size = 3 + Math.random() * 9;
+    var alpha = 0.35 + Math.random() * 0.3;
+    var spread = size * 3;
+    dot.style.cssText =
+      'position:fixed;z-index:99;pointer-events:none;border-radius:50%;' +
+      'left:' + (e.clientX - size/2) + 'px;top:' + (e.clientY - size/2) + 'px;' +
+      'width:' + size + 'px;height:' + size + 'px;' +
+      'background:radial-gradient(circle,rgba(160,160,160,' + alpha + ') 0%,rgba(80,80,80,' + (alpha*0.3) + ') 50%,transparent 100%);' +
+      'box-shadow:0 0 ' + spread + 'px ' + (spread*0.3) + 'px rgba(0,0,0,0.12);' +
+      'transition:opacity 2s ease-out,transform 2s ease-out;';
+    document.body.appendChild(dot);
+    inkTrails.push({el:dot, time:now});
+    setTimeout(function() {
+      dot.style.opacity = '0';
+      dot.style.transform = 'scale(2.2)';
+    }, 60);
+    setTimeout(function() { dot.remove(); }, 2200);
+    if (inkTrails.length > 80) inkTrails.shift();
+  });
+
+  // ===== Click Sakura Burst =====
+  document.addEventListener('click', function(e) {
+    var count = 14 + Math.floor(Math.random() * 20);
+    for (var i = 0; i < count; i++) {
+      var petal = document.createElement('div');
+      var size = 5 + Math.random() * 12;
+      var angle = Math.random() * Math.PI * 2;
+      var dist = 50 + Math.random() * 140;
+      var dx = Math.cos(angle) * dist;
+      var dy = Math.sin(angle) * dist - 40;
+      var rot = Math.random() * 900 - 450;
+      var dur = 4 + Math.random() * 1;
+      petal.style.cssText =
+        'position:fixed;z-index:98;pointer-events:none;opacity:0;' +
+        'left:' + (e.clientX - size/2) + 'px;top:' + (e.clientY - size/2) + 'px;' +
+        'width:' + size + 'px;height:' + (size*1.4) + 'px;' +
+        'background:radial-gradient(ellipse at 35% 35%,rgba(255,210,225,0.8) 0%,rgba(255,170,195,0.35) 40%,transparent 70%);' +
+        'border-radius:50% 0 50% 0;' +
+        'transition:all ' + dur + 's cubic-bezier(.15,.65,.35,1);';
+      document.body.appendChild(petal);
+      requestAnimationFrame(function() {
+        petal.style.opacity = '1';
+      });
+      requestAnimationFrame(function() {
+        requestAnimationFrame(function() {
+          petal.style.transform = 'translate(' + dx + 'px,' + dy + 'px) rotate(' + rot + 'deg)';
+          petal.style.opacity = '0';
+        });
+      });
+      setTimeout(function() { petal.remove(); }, 5500);
+    }
+  });
+
+  // ===== Daily Poem =====
+  function fetchDailyPoem() {
+    fetch('https://v1.jinrishici.com/all')
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        var contentEl = document.getElementById('dpContent');
+        var authorEl = document.getElementById('dpAuthor');
+        if (contentEl) contentEl.textContent = data.content;
+        if (authorEl) authorEl.textContent = '—— ' + data.author;
+      })
+      .catch(function() {
+        var contentEl = document.getElementById('dpContent');
+        var authorEl = document.getElementById('dpAuthor');
+        if (contentEl) contentEl.textContent = '雨が降っている。静かに、ただ静かに。';
+        if (authorEl) authorEl.textContent = '';
+      });
+  }
+  fetchDailyPoem();
+
+  // ===== Clock =====
+  function updateClock() {
+    const now = new Date();
+    const h = String(now.getHours()).padStart(2, '0');
+    const m = String(now.getMinutes()).padStart(2, '0');
+    document.getElementById('wtClock').textContent = h + ':' + m;
+    const y = now.getFullYear();
+    const mo = String(now.getMonth() + 1).padStart(2, '0');
+    const d = String(now.getDate()).padStart(2, '0');
+    document.getElementById('wtDate').textContent = y + '.' + mo + '.' + d;
+  }
+  updateClock();
+  setInterval(updateClock, 1000);
+
+  // ===== Locked Links =====
+  function showLockedPopup() {
+    var overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:99;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;cursor:pointer;';
+    var box = document.createElement('div');
+    box.style.cssText = 'background:rgba(18,18,20,0.95);border:1px solid rgba(150,150,150,0.12);border-radius:12px;padding:48px 56px;max-width:420px;text-align:center;';
+    box.style.cssText += 'box-shadow:0 0 2px rgba(0,0,0,0.5),0 0 20px rgba(0,0,0,0.4),0 0 60px rgba(0,0,0,0.25);';
+    var ink1 = document.createElement('div');
+    ink1.style.cssText = 'position:absolute;top:-10px;right:-8px;width:70px;height:70px;pointer-events:none;background:radial-gradient(ellipse 25% 20% at 60% 35%,rgba(80,80,80,0.2) 0%,transparent 55%),radial-gradient(circle 8% at 50% 45%,rgba(100,100,100,0.15) 0%,transparent 50%);z-index:0;';
+    box.style.position = 'relative';
+    box.style.overflow = 'visible';
+    box.appendChild(ink1);
+    var p = document.createElement('p');
+    p.textContent = '好感度不足，请努力提升好感度再来解锁此链接 >_<';
+    p.style.cssText = 'color:#e8e8e8;font-size:1.5rem;line-height:2;font-family:"Zhi Mang Xing","Liu Jian Mao Cao","Ma Shan Zheng",cursive;text-shadow:0 0 2px rgba(0,0,0,0.7),0 0 6px rgba(0,0,0,0.4),0 0 16px rgba(0,0,0,0.18),0 0 35px rgba(0,0,0,0.06);position:relative;z-index:1;';
+    box.appendChild(p);
+    overlay.appendChild(box);
+    document.body.appendChild(overlay);
+    overlay.addEventListener('click', function() {
+      overlay.style.opacity = '0';
+      overlay.style.transition = 'opacity 0.4s';
+      setTimeout(function() { overlay.remove(); }, 400);
+    });
+  }
+
+  document.querySelectorAll('.locked-link, #twitterLink').forEach(function(el) {
+    el.addEventListener('click', function(e) {
+      e.preventDefault();
+      showLockedPopup();
+    });
+  });
+
+  // ===== Affection Stick Figure =====
+  var affectionCount = 0;
+  var slapMessages = [
+    '好感度：0% — 你是谁？',
+    '好感度：3% — 好像在哪见过…',
+    '好感度：7% — 嗯，有点眼熟',
+    '好感度：15% — 哦，是你啊',
+    '好感度：28% — 还行吧',
+    '好感度：42% — 开始觉得你不错了',
+    '好感度：55% — 你这个人是有点意思',
+    '好感度：72% — 我好像有点喜欢你',
+    '好感度：88% — 不要离开我！',
+    '好感度：99% — 就差一点点了…'
+  ];
+
+  function showAffectionPopup(msg) {
+    var overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:100;background:rgba(0,0,0,0.65);display:flex;align-items:center;justify-content:center;cursor:pointer;';
+    var box = document.createElement('div');
+    box.style.cssText = 'background:rgba(18,18,20,0.95);border:1px solid rgba(150,150,150,0.12);border-radius:12px;padding:48px 56px;max-width:420px;text-align:center;position:relative;overflow:visible;';
+    box.style.cssText += 'box-shadow:0 0 2px rgba(0,0,0,0.5),0 0 20px rgba(0,0,0,0.4),0 0 60px rgba(0,0,0,0.25);';
+    var ink1 = document.createElement('div');
+    ink1.style.cssText = 'position:absolute;top:-10px;right:-8px;width:70px;height:70px;pointer-events:none;background:radial-gradient(ellipse 25% 20% at 60% 35%,rgba(80,80,80,0.2) 0%,transparent 55%),radial-gradient(circle 8% at 50% 45%,rgba(100,100,100,0.15) 0%,transparent 50%);z-index:0;';
+    box.appendChild(ink1);
+    var p = document.createElement('p');
+    p.textContent = msg;
+    p.style.cssText = 'color:#e8e8e8;font-size:1.5rem;line-height:2;font-family:"Zhi Mang Xing","Liu Jian Mao Cao","Ma Shan Zheng",cursive;text-shadow:0 0 2px rgba(0,0,0,0.7),0 0 6px rgba(0,0,0,0.4),0 0 16px rgba(0,0,0,0.18),0 0 35px rgba(0,0,0,0.06);position:relative;z-index:1;';
+    box.appendChild(p);
+    overlay.appendChild(box);
+    document.body.appendChild(overlay);
+    overlay.addEventListener('click', function() {
+      overlay.style.opacity = '0';
+      overlay.style.transition = 'opacity 0.4s';
+      setTimeout(function() { overlay.remove(); }, 400);
+    });
+  }
+
+  document.getElementById('affectionBtn').addEventListener('click', function() {
+    var hand = document.getElementById('slapHand');
+    var man = document.getElementById('stickman');
+
+    hand.classList.remove('slapping');
+    void hand.offsetWidth;
+    hand.classList.add('slapping');
+
+    man.classList.add('stunned');
+    setTimeout(function() { man.classList.remove('stunned'); }, 600);
+
+    if (affectionCount >= slapMessages.length - 2) {
+      // Already at 99% — show payment popup
+      setTimeout(function() {
+        showAffectionPopup('充值提升好感度QAQ');
+      }, 400);
+    } else {
+      affectionCount = Math.min(affectionCount + 1, slapMessages.length - 2);
+      setTimeout(function() {
+        showAffectionPopup(slapMessages[affectionCount]);
+      }, 400);
+    }
+  });
+
+  // ===== Guestbook =====
+  function loadMessages() {
+    var msgs = JSON.parse(localStorage.getItem('gbMessages') || '[]');
+    var list = document.getElementById('gbList');
+    list.innerHTML = '';
+    msgs.forEach(function(m, i) {
+      var div = document.createElement('div');
+      div.className = 'gb-msg';
+      var span = document.createElement('span');
+      span.textContent = m;
+      div.appendChild(span);
+      var del = document.createElement('button');
+      del.className = 'gb-del';
+      del.textContent = '✕';
+      del.title = '删除';
+      del.addEventListener('click', function() {
+        msgs.splice(i, 1);
+        localStorage.setItem('gbMessages', JSON.stringify(msgs));
+        loadMessages();
+      });
+      div.appendChild(del);
+      list.appendChild(div);
+    });
+    list.scrollTop = list.scrollHeight;
+  }
+
+  document.getElementById('gbSubmit').addEventListener('click', function() {
+    var input = document.getElementById('gbInput');
+    var text = input.value.trim();
+    if (!text) return;
+    var msgs = JSON.parse(localStorage.getItem('gbMessages') || '[]');
+    msgs.push(text);
+    if (msgs.length > 50) msgs.shift();
+    localStorage.setItem('gbMessages', JSON.stringify(msgs));
+    input.value = '';
+    loadMessages();
+  });
+
+  document.getElementById('gbInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      document.getElementById('gbSubmit').click();
+    }
+  });
+
+  loadMessages();
+
+  // ===== Music Player =====
+  // Using NeteaseMiniPlayer v2 — auto-initialized, no manual JS needed
+
+  // ===== Scroll Fade-in =====
+  const fadeEls = document.querySelectorAll('.fade-section');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+  fadeEls.forEach(el => observer.observe(el));
+  document.querySelector('.hero').classList.add('visible');
+
+  // ===== Apple Easter Egg - Death Note =====
+  const apple = document.querySelector('.apple-easter-egg');
+  let appleClicks = 0;
+  apple.addEventListener('click', () => {
+    appleClicks++;
+    apple.style.transform = `rotate(${appleClicks * 30}deg) scale(${1 + appleClicks * 0.1})`;
+    if (appleClicks >= 5) {
+      apple.style.opacity = '0.6';
+      apple.style.filter = 'none';
+      setTimeout(() => {
+        apple.style.opacity = '0.07';
+        apple.style.transform = 'rotate(0deg) scale(1)';
+        apple.style.filter = 'grayscale(0.5)';
+        appleClicks = 0;
+      }, 2500);
+    }
+  });
+</script>
+
+<!-- sakura shader -->
+<script id="sakura_point_vsh" type="x-shader/x_vertex">
+uniform mat4 uProjection;
+uniform mat4 uModelview;
+uniform vec3 uResolution;
+uniform vec3 uOffset;
+uniform vec3 uDOF;
+uniform vec3 uFade;
+
+attribute vec3 aPosition;
+attribute vec3 aEuler;
+attribute vec2 aMisc;
+
+varying vec3 pposition;
+varying float psize;
+varying float palpha;
+varying float pdist;
+
+varying vec3 normX;
+varying vec3 normY;
+varying vec3 normZ;
+varying vec3 normal;
+
+varying float diffuse;
+varying float specular;
+varying float rstop;
+varying float distancefade;
+
+void main(void) {
+    vec4 pos = uModelview * vec4(aPosition + uOffset, 1.0);
+    gl_Position = uProjection * pos;
+    gl_PointSize = aMisc.x * uProjection[1][1] / -pos.z * uResolution.y * 0.5;
+
+    pposition = pos.xyz;
+    psize = aMisc.x;
+    pdist = length(pos.xyz);
+    palpha = smoothstep(0.0, 1.0, (pdist - 0.1) / uFade.z);
+
+    vec3 elrsn = sin(aEuler);
+    vec3 elrcs = cos(aEuler);
+    mat3 rotx = mat3(1.0, 0.0, 0.0, 0.0, elrcs.x, elrsn.x, 0.0, -elrsn.x, elrcs.x);
+    mat3 roty = mat3(elrcs.y, 0.0, -elrsn.y, 0.0, 1.0, 0.0, elrsn.y, 0.0, elrcs.y);
+    mat3 rotz = mat3(elrcs.z, elrsn.z, 0.0, -elrsn.z, elrcs.z, 0.0, 0.0, 0.0, 1.0);
+    mat3 rotmat = rotx * roty * rotz;
+    normal = rotmat[2];
+
+    mat3 trrotm = mat3(rotmat[0][0], rotmat[1][0], rotmat[2][0], rotmat[0][1], rotmat[1][1], rotmat[2][1], rotmat[0][2], rotmat[1][2], rotmat[2][2]);
+    normX = trrotm[0];
+    normY = trrotm[1];
+    normZ = trrotm[2];
+
+    const vec3 lit = vec3(0.6917144638660746, 0.6917144638660746, -0.20751433915982237);
+
+    float tmpdfs = dot(lit, normal);
+    if(tmpdfs < 0.0) { normal = -normal; tmpdfs = dot(lit, normal); }
+    diffuse = 0.4 + tmpdfs;
+
+    vec3 eyev = normalize(-pos.xyz);
+    if(dot(eyev, normal) > 0.0) { vec3 hv = normalize(eyev + lit); specular = pow(max(dot(hv, normal), 0.0), 20.0); }
+    else { specular = 0.0; }
+
+    rstop = clamp((abs(pdist - uDOF.x) - uDOF.y) / uDOF.z, 0.0, 1.0);
+    rstop = pow(rstop, 0.5);
+    distancefade = min(1.0, exp((uFade.x - pdist) * 0.69315 / uFade.y));
+}
+</script>
+<script id="sakura_point_fsh" type="x-shader/x_fragment">
+#ifdef GL_ES
+precision highp float;
+#endif
+
+uniform vec3 uDOF;
+uniform vec3 uFade;
+
+const vec3 fadeCol = vec3(0.08, 0.03, 0.06);
+
+varying vec3 pposition;
+varying float psize;
+varying float palpha;
+varying float pdist;
+
+varying vec3 normX;
+varying vec3 normY;
+varying vec3 normZ;
+varying vec3 normal;
+
+varying float diffuse;
+varying float specular;
+varying float rstop;
+varying float distancefade;
+
+float ellipse(vec2 p, vec2 o, vec2 r) {
+    vec2 lp = (p - o) / r;
+    return length(lp) - 1.0;
+}
+
+void main(void) {
+    vec3 p = vec3(gl_PointCoord - vec2(0.5, 0.5), 0.0) * 2.0;
+    vec3 d = vec3(0.0, 0.0, -1.0);
+    float nd = normZ.z;
+    if(abs(nd) < 0.0001) discard;
+
+    float np = dot(normZ, p);
+    vec3 tp = p + d * np / nd;
+    vec2 coord = vec2(dot(normX, tp), dot(normY, tp));
+
+    const float flwrsn = 0.258819045102521;
+    const float flwrcs = 0.965925826289068;
+    mat2 flwrm = mat2(flwrcs, -flwrsn, flwrsn, flwrcs);
+    vec2 flwrp = vec2(abs(coord.x), coord.y) * flwrm;
+
+    float r;
+    if(flwrp.x < 0.0) { r = ellipse(flwrp, vec2(0.065, 0.024) * 0.5, vec2(0.36, 0.96) * 0.5); }
+    else { r = ellipse(flwrp, vec2(0.065, 0.024) * 0.5, vec2(0.58, 0.96) * 0.5); }
+
+    if(r > rstop) discard;
+
+    vec3 col = mix(vec3(1.0, 0.8, 0.75), vec3(1.0, 0.9, 0.87), r);
+    float grady = mix(0.0, 1.0, pow(coord.y * 0.5 + 0.5, 0.35));
+    col *= vec3(1.0, grady, grady);
+    col *= mix(0.8, 1.0, pow(abs(coord.x), 0.3));
+    col = col * diffuse + specular;
+    col = mix(fadeCol, col, distancefade);
+
+    float alpha = (rstop > 0.001)? (0.5 - r / (rstop * 2.0)) : 1.0;
+    alpha = smoothstep(0.0, 1.0, alpha) * palpha;
+    gl_FragColor = vec4(col * 0.5, alpha);
+}
+</script>
+<script id="fx_common_vsh" type="x-shader/x_vertex">
+uniform vec3 uResolution;
+attribute vec2 aPosition;
+varying vec2 texCoord;
+varying vec2 screenCoord;
+void main(void) {
+    gl_Position = vec4(aPosition, 0.0, 1.0);
+    texCoord = aPosition.xy * 0.5 + vec2(0.5, 0.5);
+    screenCoord = aPosition.xy * vec2(uResolution.z, 1.0);
+}
+</script>
+<script id="bg_fsh" type="x-shader/x_fragment">
+#ifdef GL_ES
+precision highp float;
+#endif
+uniform vec2 uTimes;
+varying vec2 texCoord;
+varying vec2 screenCoord;
+void main(void) {
+    vec3 col;
+    float c;
+    vec2 tmpv = texCoord * vec2(0.8, 1.0) - vec2(0.95, 1.0);
+    c = exp(-pow(length(tmpv) * 1.8, 2.0));
+    col = mix(vec3(0.02, 0.0, 0.03), vec3(0.96, 0.98, 1.0) * 1.5, c);
+    gl_FragColor = vec4(col * 0.5, 1.0);
+}
+</script>
+<script id="fx_brightbuf_fsh" type="x-shader/x_fragment">
+#ifdef GL_ES
+precision highp float;
+#endif
+uniform sampler2D uSrc;
+uniform vec2 uDelta;
+varying vec2 texCoord;
+varying vec2 screenCoord;
+void main(void) {
+    vec4 col = texture2D(uSrc, texCoord);
+    gl_FragColor = vec4(col.rgb * 2.0 - vec3(0.5), 1.0);
+}
+</script>
+<script id="fx_dirblur_r4_fsh" type="x-shader/x_fragment">
+#ifdef GL_ES
+precision highp float;
+#endif
+uniform sampler2D uSrc;
+uniform vec2 uDelta;
+uniform vec4 uBlurDir;
+varying vec2 texCoord;
+varying vec2 screenCoord;
+void main(void) {
+    vec4 col = texture2D(uSrc, texCoord);
+    col = col + texture2D(uSrc, texCoord + uBlurDir.xy * uDelta);
+    col = col + texture2D(uSrc, texCoord - uBlurDir.xy * uDelta);
+    col = col + texture2D(uSrc, texCoord + (uBlurDir.xy + uBlurDir.zw) * uDelta);
+    col = col + texture2D(uSrc, texCoord - (uBlurDir.xy + uBlurDir.zw) * uDelta);
+    gl_FragColor = col / 5.0;
+}
+</script>
+<script id="fx_common_fsh" type="x-shader/x_fragment">
+#ifdef GL_ES
+precision highp float;
+#endif
+uniform sampler2D uSrc;
+uniform vec2 uDelta;
+varying vec2 texCoord;
+varying vec2 screenCoord;
+void main(void) { gl_FragColor = texture2D(uSrc, texCoord); }
+</script>
+<script id="pp_final_vsh" type="x-shader/x_vertex">
+uniform vec3 uResolution;
+attribute vec2 aPosition;
+varying vec2 texCoord;
+varying vec2 screenCoord;
+void main(void) {
+    gl_Position = vec4(aPosition, 0.0, 1.0);
+    texCoord = aPosition.xy * 0.5 + vec2(0.5, 0.5);
+    screenCoord = aPosition.xy * vec2(uResolution.z, 1.0);
+}
+</script>
+<script id="pp_final_fsh" type="x-shader/x_fragment">
+#ifdef GL_ES
+precision highp float;
+#endif
+uniform sampler2D uSrc;
+uniform sampler2D uBloom;
+uniform vec2 uDelta;
+varying vec2 texCoord;
+varying vec2 screenCoord;
+void main(void) {
+    vec4 srccol = texture2D(uSrc, texCoord) * 2.0;
+    vec4 bloomcol = texture2D(uBloom, texCoord);
+    vec4 col;
+    col = srccol + bloomcol * (vec4(1.0) + srccol);
+    col *= smoothstep(1.0, 0.0, pow(length((texCoord - vec2(0.5)) * 2.0), 1.2) * 0.5);
+    col = pow(col, vec4(0.45454545454545));
+    gl_FragColor = vec4(col.rgb, 1.0);
+    gl_FragColor.a = 1.0;
+}
+</script>
+<script>
+// Sakura WebGL Engine
+var Vector3 = {};
+var Matrix44 = {};
+Vector3.create = function(x, y, z) { return {'x':x, 'y':y, 'z':z}; };
+Vector3.dot = function (v0, v1) { return v0.x * v1.x + v0.y * v1.y + v0.z * v1.z; };
+Vector3.cross = function (v, v0, v1) {
+    v.x = v0.y * v1.z - v0.z * v1.y;
+    v.y = v0.z * v1.x - v0.x * v1.z;
+    v.z = v0.x * v1.y - v0.y * v1.x;
+};
+Vector3.normalize = function (v) {
+    var l = v.x * v.x + v.y * v.y + v.z * v.z;
+    if(l > 0.00001) { l = 1.0 / Math.sqrt(l); v.x *= l; v.y *= l; v.z *= l; }
+};
+Vector3.arrayForm = function(v) {
+    if(v.array) { v.array[0] = v.x; v.array[1] = v.y; v.array[2] = v.z; }
+    else { v.array = new Float32Array([v.x, v.y, v.z]); }
+    return v.array;
+};
+Matrix44.createIdentity = function () {
+    return new Float32Array([1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]);
+};
+Matrix44.loadProjection = function (m, aspect, vdeg, near, far) {
+    var h = near * Math.tan(vdeg * Math.PI / 180.0 * 0.5) * 2.0;
+    var w = h * aspect;
+    m[0] = 2.0 * near / w; m[1] = 0.0; m[2] = 0.0; m[3] = 0.0;
+    m[4] = 0.0; m[5] = 2.0 * near / h; m[6] = 0.0; m[7] = 0.0;
+    m[8] = 0.0; m[9] = 0.0; m[10] = -(far + near) / (far - near); m[11] = -1.0;
+    m[12] = 0.0; m[13] = 0.0; m[14] = -2.0 * far * near / (far - near); m[15] = 0.0;
+};
+Matrix44.loadLookAt = function (m, vpos, vlook, vup) {
+    var frontv = Vector3.create(vpos.x - vlook.x, vpos.y - vlook.y, vpos.z - vlook.z);
+    Vector3.normalize(frontv);
+    var sidev = Vector3.create(1.0, 0.0, 0.0);
+    Vector3.cross(sidev, vup, frontv);
+    Vector3.normalize(sidev);
+    var topv = Vector3.create(1.0, 0.0, 0.0);
+    Vector3.cross(topv, frontv, sidev);
+    Vector3.normalize(topv);
+    m[0] = sidev.x; m[1] = topv.x; m[2] = frontv.x; m[3] = 0.0;
+    m[4] = sidev.y; m[5] = topv.y; m[6] = frontv.y; m[7] = 0.0;
+    m[8] = sidev.z; m[9] = topv.z; m[10] = frontv.z; m[11] = 0.0;
+    m[12] = -(vpos.x * m[0] + vpos.y * m[4] + vpos.z * m[8]);
+    m[13] = -(vpos.x * m[1] + vpos.y * m[5] + vpos.z * m[9]);
+    m[14] = -(vpos.x * m[2] + vpos.y * m[6] + vpos.z * m[10]);
+    m[15] = 1.0;
+};
+
+var timeInfo = { 'start':0, 'prev':0, 'delta':0, 'elapsed':0 };
+var gl;
+var renderSpec = {
+    'width':0, 'height':0, 'aspect':1, 'array':new Float32Array(3),
+    'halfWidth':0, 'halfHeight':0, 'halfArray':new Float32Array(3)
+};
+renderSpec.setSize = function(w, h) {
+    renderSpec.width = w;
+    renderSpec.height = h;
+    renderSpec.aspect = renderSpec.width / renderSpec.height;
+    renderSpec.array[0] = renderSpec.width;
+    renderSpec.array[1] = renderSpec.height;
+    renderSpec.array[2] = renderSpec.aspect;
+    renderSpec.halfWidth = Math.floor(w / 2);
+    renderSpec.halfHeight = Math.floor(h / 2);
+    renderSpec.halfArray[0] = renderSpec.halfWidth;
+    renderSpec.halfArray[1] = renderSpec.halfHeight;
+    renderSpec.halfArray[2] = renderSpec.halfWidth / renderSpec.halfHeight;
+};
+
+function deleteRenderTarget(rt) {
+    gl.deleteFramebuffer(rt.frameBuffer);
+    gl.deleteRenderbuffer(rt.renderBuffer);
+    gl.deleteTexture(rt.texture);
+}
+
+function createRenderTarget(w, h) {
+    var ret = {
+        'width':w, 'height':h,
+        'sizeArray':new Float32Array([w, h, w / h]),
+        'dtxArray':new Float32Array([1.0 / w, 1.0 / h])
+    };
+    ret.frameBuffer = gl.createFramebuffer();
+    ret.renderBuffer = gl.createRenderbuffer();
+    ret.texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, ret.texture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, w, h, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, ret.frameBuffer);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, ret.texture, 0);
+    gl.bindRenderbuffer(gl.RENDERBUFFER, ret.renderBuffer);
+    gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, w, h);
+    gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, ret.renderBuffer);
+    gl.bindTexture(gl.TEXTURE_2D, null);
+    gl.bindRenderbuffer(gl.RENDERBUFFER, null);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    return ret;
+}
+
+function compileShader(shtype, shsrc) {
+    var retsh = gl.createShader(shtype);
+    gl.shaderSource(retsh, shsrc);
+    gl.compileShader(retsh);
+    if(!gl.getShaderParameter(retsh, gl.COMPILE_STATUS)) {
+        var errlog = gl.getShaderInfoLog(retsh);
+        gl.deleteShader(retsh);
+        console.error(errlog);
+        return null;
+    }
+    return retsh;
+}
+
+function createShader(vtxsrc, frgsrc, uniformlist, attrlist) {
+    var vsh = compileShader(gl.VERTEX_SHADER, vtxsrc);
+    var fsh = compileShader(gl.FRAGMENT_SHADER, frgsrc);
+    if(vsh == null || fsh == null) { return null; }
+    var prog = gl.createProgram();
+    gl.attachShader(prog, vsh);
+    gl.attachShader(prog, fsh);
+    gl.deleteShader(vsh);
+    gl.deleteShader(fsh);
+    gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
+        var errlog = gl.getProgramInfoLog(prog);
+        console.error(errlog);
+        return null;
+    }
+    if(uniformlist) {
+        prog.uniforms = {};
+        for(var i = 0; i < uniformlist.length; i++) {
+            prog.uniforms[uniformlist[i]] = gl.getUniformLocation(prog, uniformlist[i]);
+        }
+    }
+    if(attrlist) {
+        prog.attributes = {};
+        for(var i = 0; i < attrlist.length; i++) {
+            var attr = attrlist[i];
+            prog.attributes[attr] = gl.getAttribLocation(prog, attr);
+        }
+    }
+    return prog;
+}
+
+function useShader(prog) {
+    gl.useProgram(prog);
+    for(var attr in prog.attributes) { gl.enableVertexAttribArray(prog.attributes[attr]); }
+}
+
+function unuseShader(prog) {
+    for(var attr in prog.attributes) { gl.disableVertexAttribArray(prog.attributes[attr]); }
+    gl.useProgram(null);
+}
+
+var projection = {
+    'angle':60,
+    'nearfar':new Float32Array([0.1, 100.0]),
+    'matrix':Matrix44.createIdentity()
+};
+var camera = {
+    'position':Vector3.create(0, 0, 100),
+    'lookat':Vector3.create(0, 0, 0),
+    'up':Vector3.create(0, 1, 0),
+    'dof':Vector3.create(10.0, 4.0, 8.0),
+    'matrix':Matrix44.createIdentity()
+};
+
+var pointFlower = {};
+var sceneStandBy = false;
+
+var BlossomParticle = function () {
+    this.velocity = new Array(3);
+    this.rotation = new Array(3);
+    this.position = new Array(3);
+    this.euler = new Array(3);
+    this.size = 1.0;
+    this.alpha = 1.0;
+    this.zkey = 0.0;
+};
+BlossomParticle.prototype.setVelocity = function (vx, vy, vz) {
+    this.velocity[0] = vx; this.velocity[1] = vy; this.velocity[2] = vz;
+};
+BlossomParticle.prototype.setRotation = function (rx, ry, rz) {
+    this.rotation[0] = rx; this.rotation[1] = ry; this.rotation[2] = rz;
+};
+BlossomParticle.prototype.setPosition = function (nx, ny, nz) {
+    this.position[0] = nx; this.position[1] = ny; this.position[2] = nz;
+};
+BlossomParticle.prototype.setEulerAngles = function (rx, ry, rz) {
+    this.euler[0] = rx; this.euler[1] = ry; this.euler[2] = rz;
+};
+BlossomParticle.prototype.setSize = function (s) { this.size = s; };
+BlossomParticle.prototype.update = function (dt, et) {
+    this.position[0] += this.velocity[0] * dt;
+    this.position[1] += this.velocity[1] * dt;
+    this.position[2] += this.velocity[2] * dt;
+    this.euler[0] += this.rotation[0] * dt;
+    this.euler[1] += this.rotation[1] * dt;
+    this.euler[2] += this.rotation[2] * dt;
+};
+
+function createPointFlowers() {
+    var prm = gl.getParameter(gl.ALIASED_POINT_SIZE_RANGE);
+    renderSpec.pointSize = {'min':prm[0], 'max':prm[1]};
+    var vtxsrc = document.getElementById("sakura_point_vsh").textContent;
+    var frgsrc = document.getElementById("sakura_point_fsh").textContent;
+    pointFlower.program = createShader(vtxsrc, frgsrc,
+        ['uProjection', 'uModelview', 'uResolution', 'uOffset', 'uDOF', 'uFade'],
+        ['aPosition', 'aEuler', 'aMisc']);
+    useShader(pointFlower.program);
+    pointFlower.offset = new Float32Array([0.0, 0.0, 0.0]);
+    pointFlower.fader = Vector3.create(0.0, 10.0, 0.0);
+    pointFlower.numFlowers = 1600;
+    pointFlower.particles = new Array(pointFlower.numFlowers);
+    pointFlower.dataArray = new Float32Array(pointFlower.numFlowers * (3 + 3 + 2));
+    pointFlower.positionArrayOffset = 0;
+    pointFlower.eulerArrayOffset = pointFlower.numFlowers * 3;
+    pointFlower.miscArrayOffset = pointFlower.numFlowers * 6;
+    pointFlower.buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, pointFlower.buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, pointFlower.dataArray, gl.DYNAMIC_DRAW);
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+    unuseShader(pointFlower.program);
+    for(var i = 0; i < pointFlower.numFlowers; i++) {
+        pointFlower.particles[i] = new BlossomParticle();
+    }
+}
+
+function initPointFlowers() {
+    pointFlower.area = Vector3.create(20.0, 20.0, 20.0);
+    pointFlower.area.x = pointFlower.area.y * renderSpec.aspect;
+    pointFlower.fader.x = 10.0;
+    pointFlower.fader.y = pointFlower.area.z;
+    pointFlower.fader.z = 0.1;
+    var PI2 = Math.PI * 2.0;
+    var tmpv3 = Vector3.create(0, 0, 0);
+    var tmpv = 0;
+    var symmetryrand = function() {return (Math.random() * 2.0 - 1.0);};
+    for(var i = 0; i < pointFlower.numFlowers; i++) {
+        var tmpprtcl = pointFlower.particles[i];
+        tmpv3.x = symmetryrand() * 0.3 + 0.8;
+        tmpv3.y = symmetryrand() * 0.2 - 1.0;
+        tmpv3.z = symmetryrand() * 0.3 + 0.5;
+        Vector3.normalize(tmpv3);
+        tmpv = 2.0 + Math.random() * 1.0;
+        tmpprtcl.setVelocity(tmpv3.x * tmpv, tmpv3.y * tmpv, tmpv3.z * tmpv);
+        tmpprtcl.setRotation(symmetryrand() * PI2 * 0.5, symmetryrand() * PI2 * 0.5, symmetryrand() * PI2 * 0.5);
+        tmpprtcl.setPosition(symmetryrand() * pointFlower.area.x, symmetryrand() * pointFlower.area.y, symmetryrand() * pointFlower.area.z);
+        tmpprtcl.setEulerAngles(Math.random() * Math.PI * 2.0, Math.random() * Math.PI * 2.0, Math.random() * Math.PI * 2.0);
+        tmpprtcl.setSize(0.9 + Math.random() * 0.1);
+    }
+}
+
+function renderPointFlowers() {
+    var PI2 = Math.PI * 2.0;
+    var limit = [pointFlower.area.x, pointFlower.area.y, pointFlower.area.z];
+    var repeatPos = function (prt, cmp, limit) {
+        if(Math.abs(prt.position[cmp]) - prt.size * 0.5 > limit) {
+            if(prt.position[cmp] > 0) { prt.position[cmp] -= limit * 2.0; }
+            else { prt.position[cmp] += limit * 2.0; }
+        }
+    };
+    var repeatEuler = function (prt, cmp) {
+        prt.euler[cmp] = prt.euler[cmp] % PI2;
+        if(prt.euler[cmp] < 0.0) { prt.euler[cmp] += PI2; }
+    };
+    for(var i = 0; i < pointFlower.numFlowers; i++) {
+        var prtcl = pointFlower.particles[i];
+        prtcl.update(timeInfo.delta, timeInfo.elapsed);
+        repeatPos(prtcl, 0, pointFlower.area.x);
+        repeatPos(prtcl, 1, pointFlower.area.y);
+        repeatPos(prtcl, 2, pointFlower.area.z);
+        repeatEuler(prtcl, 0); repeatEuler(prtcl, 1); repeatEuler(prtcl, 2);
+        prtcl.alpha = 1.0;
+        prtcl.zkey = (camera.matrix[2] * prtcl.position[0] + camera.matrix[6] * prtcl.position[1] + camera.matrix[10] * prtcl.position[2] + camera.matrix[14]);
+    }
+    pointFlower.particles.sort(function(p0, p1){return p0.zkey - p1.zkey;});
+    var ipos = pointFlower.positionArrayOffset;
+    var ieuler = pointFlower.eulerArrayOffset;
+    var imisc = pointFlower.miscArrayOffset;
+    for(var i = 0; i < pointFlower.numFlowers; i++) {
+        var prtcl = pointFlower.particles[i];
+        pointFlower.dataArray[ipos] = prtcl.position[0];
+        pointFlower.dataArray[ipos + 1] = prtcl.position[1];
+        pointFlower.dataArray[ipos + 2] = prtcl.position[2];
+        ipos += 3;
+        pointFlower.dataArray[ieuler] = prtcl.euler[0];
+        pointFlower.dataArray[ieuler + 1] = prtcl.euler[1];
+        pointFlower.dataArray[ieuler + 2] = prtcl.euler[2];
+        ieuler += 3;
+        pointFlower.dataArray[imisc] = prtcl.size;
+        pointFlower.dataArray[imisc + 1] = prtcl.alpha;
+        imisc += 2;
+    }
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    var prog = pointFlower.program;
+    useShader(prog);
+    gl.uniformMatrix4fv(prog.uniforms.uProjection, false, projection.matrix);
+    gl.uniformMatrix4fv(prog.uniforms.uModelview, false, camera.matrix);
+    gl.uniform3fv(prog.uniforms.uResolution, renderSpec.array);
+    gl.uniform3fv(prog.uniforms.uDOF, Vector3.arrayForm(camera.dof));
+    gl.uniform3fv(prog.uniforms.uFade, Vector3.arrayForm(pointFlower.fader));
+    gl.bindBuffer(gl.ARRAY_BUFFER, pointFlower.buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, pointFlower.dataArray, gl.DYNAMIC_DRAW);
+    gl.vertexAttribPointer(prog.attributes.aPosition, 3, gl.FLOAT, false, 0, pointFlower.positionArrayOffset * Float32Array.BYTES_PER_ELEMENT);
+    gl.vertexAttribPointer(prog.attributes.aEuler, 3, gl.FLOAT, false, 0, pointFlower.eulerArrayOffset * Float32Array.BYTES_PER_ELEMENT);
+    gl.vertexAttribPointer(prog.attributes.aMisc, 2, gl.FLOAT, false, 0, pointFlower.miscArrayOffset * Float32Array.BYTES_PER_ELEMENT);
+    for(var i = 1; i < 2; i++) {
+        var zpos = i * -2.0;
+        pointFlower.offset[0] = pointFlower.area.x * -1.0;
+        pointFlower.offset[1] = pointFlower.area.y * -1.0;
+        pointFlower.offset[2] = pointFlower.area.z * zpos;
+        gl.uniform3fv(prog.uniforms.uOffset, pointFlower.offset);
+        gl.drawArrays(gl.POINT, 0, pointFlower.numFlowers);
+        pointFlower.offset[0] = pointFlower.area.x * -1.0;
+        pointFlower.offset[1] = pointFlower.area.y *  1.0;
+        pointFlower.offset[2] = pointFlower.area.z * zpos;
+        gl.uniform3fv(prog.uniforms.uOffset, pointFlower.offset);
+        gl.drawArrays(gl.POINT, 0, pointFlower.numFlowers);
+        pointFlower.offset[0] = pointFlower.area.x *  1.0;
+        pointFlower.offset[1] = pointFlower.area.y * -1.0;
+        pointFlower.offset[2] = pointFlower.area.z * zpos;
+        gl.uniform3fv(prog.uniforms.uOffset, pointFlower.offset);
+        gl.drawArrays(gl.POINT, 0, pointFlower.numFlowers);
+        pointFlower.offset[0] = pointFlower.area.x *  1.0;
+        pointFlower.offset[1] = pointFlower.area.y *  1.0;
+        pointFlower.offset[2] = pointFlower.area.z * zpos;
+        gl.uniform3fv(prog.uniforms.uOffset, pointFlower.offset);
+        gl.drawArrays(gl.POINT, 0, pointFlower.numFlowers);
+    }
+    pointFlower.offset[0] = 0.0;
+    pointFlower.offset[1] = 0.0;
+    pointFlower.offset[2] = 0.0;
+    gl.uniform3fv(prog.uniforms.uOffset, pointFlower.offset);
+    gl.drawArrays(gl.POINT, 0, pointFlower.numFlowers);
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+    unuseShader(prog);
+    gl.enable(gl.DEPTH_TEST);
+    gl.disable(gl.BLEND);
+}
+
+function createEffectProgram(vtxsrc, frgsrc, exunifs, exattrs) {
+    var ret = {};
+    var unifs = ['uResolution', 'uSrc', 'uDelta'];
+    if(exunifs) { unifs = unifs.concat(exunifs); }
+    var attrs = ['aPosition'];
+    if(exattrs) { attrs = attrs.concat(exattrs); }
+    ret.program = createShader(vtxsrc, frgsrc, unifs, attrs);
+    useShader(ret.program);
+    ret.dataArray = new Float32Array([-1.0, -1.0, 1.0, -1.0, -1.0, 1.0, 1.0, 1.0]);
+    ret.buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, ret.buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, ret.dataArray, gl.STATIC_DRAW);
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+    unuseShader(ret.program);
+    return ret;
+}
+
+function useEffect(fxobj, srctex) {
+    var prog = fxobj.program;
+    useShader(prog);
+    gl.uniform3fv(prog.uniforms.uResolution, renderSpec.array);
+    if(srctex != null) {
+        gl.uniform2fv(prog.uniforms.uDelta, srctex.dtxArray);
+        gl.uniform1i(prog.uniforms.uSrc, 0);
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, srctex.texture);
+    }
+}
+function drawEffect(fxobj) {
+    gl.bindBuffer(gl.ARRAY_BUFFER, fxobj.buffer);
+    gl.vertexAttribPointer(fxobj.program.attributes.aPosition, 2, gl.FLOAT, false, 0, 0);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+}
+function unuseEffect(fxobj) { unuseShader(fxobj.program); }
+
+var effectLib = {};
+function createEffectLib() {
+    var vtxsrc, frgsrc;
+    var cmnvtxsrc = document.getElementById("fx_common_vsh").textContent;
+    frgsrc = document.getElementById("bg_fsh").textContent;
+    effectLib.sceneBg = createEffectProgram(cmnvtxsrc, frgsrc, ['uTimes'], null);
+    frgsrc = document.getElementById("fx_brightbuf_fsh").textContent;
+    effectLib.mkBrightBuf = createEffectProgram(cmnvtxsrc, frgsrc, null, null);
+    frgsrc = document.getElementById("fx_dirblur_r4_fsh").textContent;
+    effectLib.dirBlur = createEffectProgram(cmnvtxsrc, frgsrc, ['uBlurDir'], null);
+    vtxsrc = document.getElementById("pp_final_vsh").textContent;
+    frgsrc = document.getElementById("pp_final_fsh").textContent;
+    effectLib.finalComp = createEffectProgram(vtxsrc, frgsrc, ['uBloom'], null);
+}
+
+function renderBackground() {
+    gl.disable(gl.DEPTH_TEST);
+    useEffect(effectLib.sceneBg, null);
+    gl.uniform2f(effectLib.sceneBg.program.uniforms.uTimes, timeInfo.elapsed, timeInfo.delta);
+    drawEffect(effectLib.sceneBg);
+    unuseEffect(effectLib.sceneBg);
+    gl.enable(gl.DEPTH_TEST);
+}
+
+function renderPostProcess() {
+    gl.enable(gl.TEXTURE_2D);
+    gl.disable(gl.DEPTH_TEST);
+    var bindRT = function (rt, isclear) {
+        gl.bindFramebuffer(gl.FRAMEBUFFER, rt.frameBuffer);
+        gl.viewport(0, 0, rt.width, rt.height);
+        if(isclear) {
+            gl.clearColor(0, 0, 0, 0);
+            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        }
+    };
+    bindRT(renderSpec.wHalfRT0, true);
+    useEffect(effectLib.mkBrightBuf, renderSpec.mainRT);
+    drawEffect(effectLib.mkBrightBuf);
+    unuseEffect(effectLib.mkBrightBuf);
+    for(var i = 0; i < 2; i++) {
+        var p = 1.5 + 1 * i;
+        var s = 2.0 + 1 * i;
+        bindRT(renderSpec.wHalfRT1, true);
+        useEffect(effectLib.dirBlur, renderSpec.wHalfRT0);
+        gl.uniform4f(effectLib.dirBlur.program.uniforms.uBlurDir, p, 0.0, s, 0.0);
+        drawEffect(effectLib.dirBlur);
+        unuseEffect(effectLib.dirBlur);
+        bindRT(renderSpec.wHalfRT0, true);
+        useEffect(effectLib.dirBlur, renderSpec.wHalfRT1);
+        gl.uniform4f(effectLib.dirBlur.program.uniforms.uBlurDir, 0.0, p, 0.0, s);
+        drawEffect(effectLib.dirBlur);
+        unuseEffect(effectLib.dirBlur);
+    }
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.viewport(0, 0, renderSpec.width, renderSpec.height);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    useEffect(effectLib.finalComp, renderSpec.mainRT);
+    gl.uniform1i(effectLib.finalComp.program.uniforms.uBloom, 1);
+    gl.activeTexture(gl.TEXTURE1);
+    gl.bindTexture(gl.TEXTURE_2D, renderSpec.wHalfRT0.texture);
+    drawEffect(effectLib.finalComp);
+    unuseEffect(effectLib.finalComp);
+    gl.enable(gl.DEPTH_TEST);
+}
+
+function createScene() {
+    createEffectLib();
+    createPointFlowers();
+    sceneStandBy = true;
+}
+
+function initScene() {
+    initPointFlowers();
+    camera.position.z = pointFlower.area.z + projection.nearfar[0];
+    projection.angle = Math.atan2(pointFlower.area.y, camera.position.z + pointFlower.area.z) * 180.0 / Math.PI * 2.0;
+    Matrix44.loadProjection(projection.matrix, renderSpec.aspect, projection.angle, projection.nearfar[0], projection.nearfar[1]);
+}
+
+function renderScene() {
+    Matrix44.loadLookAt(camera.matrix, camera.position, camera.lookat, camera.up);
+    gl.enable(gl.DEPTH_TEST);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, renderSpec.mainRT.frameBuffer);
+    gl.viewport(0, 0, renderSpec.mainRT.width, renderSpec.mainRT.height);
+    gl.clearColor(0.005, 0, 0.05, 0);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    renderBackground();
+    renderPointFlowers();
+    renderPostProcess();
+}
+
+function onResize(e) {
+    makeCanvasFullScreen(document.getElementById("sakura"));
+    setViewports();
+    if(sceneStandBy) { initScene(); }
+}
+
+function setViewports() {
+    renderSpec.setSize(gl.canvas.width, gl.canvas.height);
+    gl.clearColor(0.2, 0.2, 0.5, 1.0);
+    gl.viewport(0, 0, renderSpec.width, renderSpec.height);
+    var rtfunc = function (rtname, rtw, rth) {
+        var rt = renderSpec[rtname];
+        if(rt) deleteRenderTarget(rt);
+        renderSpec[rtname] = createRenderTarget(rtw, rth);
+    };
+    rtfunc('mainRT', renderSpec.width, renderSpec.height);
+    rtfunc('wFullRT0', renderSpec.width, renderSpec.height);
+    rtfunc('wFullRT1', renderSpec.width, renderSpec.height);
+    rtfunc('wHalfRT0', renderSpec.halfWidth, renderSpec.halfHeight);
+    rtfunc('wHalfRT1', renderSpec.halfWidth, renderSpec.halfHeight);
+}
+
+function render() { renderScene(); }
+
+var animating = true;
+
+function animate() {
+    var curdate = new Date();
+    timeInfo.elapsed = (curdate - timeInfo.start) / 1000.0;
+    timeInfo.delta = (curdate - timeInfo.prev) / 1000.0;
+    timeInfo.prev = curdate;
+    if(animating) requestAnimationFrame(animate);
+    render();
+}
+
+function makeCanvasFullScreen(canvas) {
+    var b = document.body;
+    var d = document.documentElement;
+    fullw = Math.max(b.clientWidth , b.scrollWidth, d.scrollWidth, d.clientWidth);
+    fullh = Math.max(b.clientHeight , b.scrollHeight, d.scrollHeight, d.clientHeight);
+    canvas.width = fullw;
+    canvas.height = fullh;
+}
+
+window.addEventListener('load', function(e) {
+    var canvas = document.getElementById("sakura");
+    try {
+        makeCanvasFullScreen(canvas);
+        gl = canvas.getContext('experimental-webgl');
+    } catch(e) {
+        console.error("WebGL not supported.", e);
+        return;
+    }
+    window.addEventListener('resize', onResize);
+    setViewports();
+    createScene();
+    initScene();
+    timeInfo.start = new Date();
+    timeInfo.prev = timeInfo.start;
+    animate();
+});
+
+(function (w, r) {
+    w['r'+r] = w['r'+r] || w['webkitR'+r] || w['mozR'+r] || w['msR'+r] || w['oR'+r] || function(c){ w.setTimeout(c, 1000 / 60); };
+})(window, 'equestAnimationFrame');
+</script>
+
+</body>
+</html>
